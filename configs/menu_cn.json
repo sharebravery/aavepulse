@@ -1,0 +1,307 @@
+[
+    {
+        "code": "home",
+        "name": "协议概览",
+        "sequence": 90,
+        "type": "page",
+        "path": "/overview",
+        "status": "enabled",
+        "resources": [
+            {
+                "method": "GET",
+                "path": "/api/v1/defi/overview"
+            }
+        ]
+    },
+    {
+        "code": "defi",
+        "name": "DeFi 数据",
+        "sequence": 80,
+        "type": "page",
+        "path": "/defi",
+        "status": "enabled",
+        "children": [
+            {
+                "code": "reserves",
+                "name": "储备市场",
+                "sequence": 90,
+                "type": "page",
+                "path": "/reserves",
+                "status": "enabled",
+                "resources": [
+                    {
+                        "method": "GET",
+                        "path": "/api/v1/defi/reserves"
+                    },
+                    {
+                        "method": "GET",
+                        "path": "/api/v1/defi/reserves/{id}"
+                    },
+                    {
+                        "method": "GET",
+                        "path": "/api/v1/defi/reserves/{id}/snapshots"
+                    }
+                ]
+            },
+            {
+                "code": "sync-runs",
+                "name": "同步记录",
+                "sequence": 80,
+                "type": "page",
+                "path": "/sync-runs",
+                "status": "enabled",
+                "children": [
+                    {
+                        "code": "run",
+                        "name": "执行同步",
+                        "sequence": 90,
+                        "type": "button",
+                        "status": "enabled",
+                        "resources": [
+                            {
+                                "method": "POST",
+                                "path": "/api/v1/defi/sync-runs"
+                            }
+                        ]
+                    }
+                ],
+                "resources": [
+                    {
+                        "method": "GET",
+                        "path": "/api/v1/defi/sync-runs"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "code": "system",
+        "name": "系统管理",
+        "sequence": 10,
+        "type": "page",
+        "path": "/system",
+        "status": "enabled",
+        "children": [
+            {
+                "code": "menu",
+                "name": "菜单管理",
+                "sequence": 90,
+                "type": "page",
+                "path": "/system/menu",
+                "status": "enabled",
+                "children": [
+                    {
+                        "code": "add",
+                        "name": "增加",
+                        "sequence": 9,
+                        "type": "button",
+                        "status": "enabled",
+                        "resources": [
+                            {
+                                "method": "POST",
+                                "path": "/api/v1/menus"
+                            }
+                        ]
+                    },
+                    {
+                        "code": "edit",
+                        "name": "编辑",
+                        "sequence": 8,
+                        "type": "button",
+                        "status": "enabled",
+                        "resources": [
+                            {
+                                "method": "PUT",
+                                "path": "/api/v1/menus/{id}"
+                            }
+                        ]
+                    },
+                    {
+                        "code": "delete",
+                        "name": "删除",
+                        "sequence": 7,
+                        "type": "button",
+                        "status": "enabled",
+                        "resources": [
+                            {
+                                "method": "DELETE",
+                                "path": "/api/v1/menus/{id}"
+                            }
+                        ]
+                    },
+                    {
+                        "code": "search",
+                        "name": "查询",
+                        "sequence": 6,
+                        "type": "button",
+                        "status": "enabled"
+                    }
+                ],
+                "resources": [
+                    {
+                        "method": "GET",
+                        "path": "/api/v1/menus"
+                    },
+                    {
+                        "method": "GET",
+                        "path": "/api/v1/menus/{id}"
+                    }
+                ]
+            },
+            {
+                "code": "role",
+                "name": "角色管理",
+                "sequence": 80,
+                "type": "page",
+                "path": "/system/role",
+                "status": "enabled",
+                "children": [
+                    {
+                        "code": "add",
+                        "name": "增加",
+                        "sequence": 9,
+                        "type": "button",
+                        "status": "enabled",
+                        "resources": [
+                            {
+                                "method": "POST",
+                                "path": "/api/v1/roles"
+                            }
+                        ]
+                    },
+                    {
+                        "code": "edit",
+                        "name": "编辑",
+                        "sequence": 8,
+                        "type": "button",
+                        "status": "enabled",
+                        "resources": [
+                            {
+                                "method": "PUT",
+                                "path": "/api/v1/roles/{id}"
+                            }
+                        ]
+                    },
+                    {
+                        "code": "delete",
+                        "name": "删除",
+                        "sequence": 7,
+                        "type": "button",
+                        "status": "enabled",
+                        "resources": [
+                            {
+                                "method": "DELETE",
+                                "path": "/api/v1/roles/{id}"
+                            }
+                        ]
+                    },
+                    {
+                        "code": "search",
+                        "name": "查询",
+                        "sequence": 6,
+                        "type": "button",
+                        "status": "enabled"
+                    }
+                ],
+                "resources": [
+                    {
+                        "method": "GET",
+                        "path": "/api/v1/menus"
+                    },
+                    {
+                        "method": "GET",
+                        "path": "/api/v1/roles"
+                    },
+                    {
+                        "method": "GET",
+                        "path": "/api/v1/roles/{id}"
+                    }
+                ]
+            },
+            {
+                "code": "user",
+                "name": "用户管理",
+                "sequence": 70,
+                "type": "page",
+                "path": "/system/user",
+                "status": "enabled",
+                "children": [
+                    {
+                        "code": "add",
+                        "name": "增加",
+                        "sequence": 9,
+                        "type": "button",
+                        "status": "enabled",
+                        "resources": [
+                            {
+                                "method": "POST",
+                                "path": "/api/v1/users"
+                            }
+                        ]
+                    },
+                    {
+                        "code": "edit",
+                        "name": "编辑",
+                        "sequence": 8,
+                        "type": "button",
+                        "status": "enabled",
+                        "resources": [
+                            {
+                                "method": "PUT",
+                                "path": "/api/v1/users/{id}"
+                            }
+                        ]
+                    },
+                    {
+                        "code": "delete",
+                        "name": "删除",
+                        "sequence": 7,
+                        "type": "button",
+                        "status": "enabled",
+                        "resources": [
+                            {
+                                "method": "DELETE",
+                                "path": "/api/v1/users/{id}"
+                            }
+                        ]
+                    },
+                    {
+                        "code": "search",
+                        "name": "查询",
+                        "sequence": 6,
+                        "type": "button",
+                        "status": "enabled"
+                    }
+                ],
+                "resources": [
+                    {
+                        "method": "GET",
+                        "path": "/api/v1/roles"
+                    },
+                    {
+                        "method": "GET",
+                        "path": "/api/v1/users"
+                    },
+                    {
+                        "method": "GET",
+                        "path": "/api/v1/users/{id}"
+                    }
+                ]
+            },
+            {
+                "code": "logger",
+                "name": "日志查询",
+                "sequence": 10,
+                "type": "page",
+                "path": "/system/logger",
+                "status": "enabled",
+                "resources": [
+                    {
+                        "method": "GET",
+                        "path": "/api/v1/loggers"
+                    }
+                ]
+            }
+        ]
+    }
+]

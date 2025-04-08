@@ -1,0 +1,8 @@
+AavePulse
+Copyright 2026 AavePulse contributors
+
+This product includes software developed by LyricTian as part of gin-admin
+(https://github.com/LyricTian/gin-admin), licensed under the Apache License 2.0.
+
+The AavePulse project changes the application identity, configuration, and
+business modules while retaining portions of the gin-admin framework.
