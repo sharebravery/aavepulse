@@ -1,6 +1,16 @@
 # AavePulse Implementation Plan
 
-> **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+## 使用方式
+
+这份计划面向实际执行，不包含任何内部助手提示。建议按下面顺序阅读：
+
+1. `docs/requirements.md`
+2. `docs/template-migration.md`
+3. `docs/architecture.md`
+4. `docs/database.md`
+5. `docs/local-development.md`
+
+确认需求和约束后，再按任务顺序推进实现。
 
 **Goal:** Build the documented AavePulse read-only Aave V3 monitoring application on the gin-admin template, including PostgreSQL persistence, The Graph synchronization, authenticated APIs, and a React dashboard.
 
@@ -10,7 +20,7 @@
 
 ---
 
-### Task 1: Replace the custom backend with the template
+### Task 1: Initialize from the template and replace the old backend
 
 **Files:**
 - Replace: `cmd`, `internal`, `pkg`, `go.mod`, `go.sum`, `main.go`, `Makefile`, `Dockerfile`
@@ -18,9 +28,9 @@
 - Preserve: `docs`, `AGENTS.md`
 
 **Steps:**
-1. Run gin-admin-cli against the upstream main branch in a temporary parent directory.
+1. Run `gin-admin-cli` against the upstream `main` branch in a temporary parent directory.
 2. Verify generated module imports, application name, version, and binary name.
-3. Restore the upstream Apache-2.0 license and add derivative-work notice.
+3. Restore the upstream Apache-2.0 license and add a derivative-work notice.
 4. Remove the old custom backend and copy the verified generated baseline into the workspace.
 5. Run `go test ./...` and fix template compatibility issues without changing behavior.
 
@@ -86,4 +96,4 @@
 4. Serve the frontend and verify the main user flow in a browser at desktop and mobile sizes.
 5. Search for old application names, old module imports, secrets, and unwanted template branding.
 6. Re-read `docs/requirements.md` and record evidence for every acceptance criterion.
-7. Update README with exact local setup and demo credentials.
+7. Update `README.md` with exact local setup, demo credentials, and the shortest path from clone to demo.
