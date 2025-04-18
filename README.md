@@ -67,7 +67,15 @@ Vite 地址为 `http://localhost:5173`，`/api` 请求会代理到 `localhost:80
 
 ## 使用 The Graph
 
-真实 Graph 模式不允许静默回退为 Demo 数据。在本地 `.env` 中配置：
+真实 Graph 模式不允许静默回退为 Demo 数据。项目只读取进程环境变量，不会自动加载 `.env`，所以本地可以先执行：
+
+```bash
+set -a
+source .env
+set +a
+```
+
+然后在 `.env` 中配置：
 
 ```bash
 AAVEPULSE_DEMO_MODE=false

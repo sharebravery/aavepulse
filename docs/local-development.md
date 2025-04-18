@@ -23,6 +23,8 @@
 ## 配置约定
 
 - 后端沿用 `gin-admin` 的 TOML 配置体系，敏感值允许由环境变量覆盖
+- 后端只读取进程环境变量，不会自动加载 `.env`；本地可先用 `set -a; source .env; set +a`
+  再执行 `make start`
 - 使用 `.env.example` 说明前端和 Docker Compose 需要的变量
 - 不提交真实密钥、真实 RPC、真实数据库地址
 - 所有对外服务地址都通过环境变量注入
