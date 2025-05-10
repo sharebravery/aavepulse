@@ -46,6 +46,7 @@ web/vite.config.d.ts
 .skilld
 AGENTS.md
 package.json
+!web/package.json
 skills-lock.json
 blogs
 docs/drafts
