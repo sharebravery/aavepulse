@@ -1,9 +1,15 @@
 import { useEffect, useState } from 'react'
-import { Alert, Button, Skeleton, Table, Tag, message } from 'antd'
-import { ArrowUpRight, DatabaseZap, RefreshCw } from 'lucide-react'
+import { Activity, ArrowUpRight, Database, Droplets, Gauge, RefreshCw, TrendingUp } from 'lucide-react'
 import { api } from '../lib/client'
 import { formatCurrency, formatDateTime, formatPercent } from '../lib/format'
 import type { Overview, Reserve, SyncRun } from '../lib/types'
+import { MetricCard } from '../components/MetricCard'
+import { PageIntro } from '../components/PageIntro'
+import { StatusPill } from '../components/StatusPill'
+import { TokenOrb } from '../components/TokenOrb'
+import { UtilizationBar } from '../components/UtilizationBar'
+import { Button } from '../components/ui/button'
+import { Skeleton } from '../components/ui/skeleton'
 
 export function OverviewPage({ onOpenReserve }: { onOpenReserve: (reserve: Reserve) => void }) {
   const [overview, setOverview] = useState<Overview | null>(null)
@@ -11,16 +17,12 @@ export function OverviewPage({ onOpenReserve }: { onOpenReserve: (reserve: Reser
   const [latestRun, setLatestRun] = useState<SyncRun | null>(null)
   const [error, setError] = useState('')
   const [syncing, setSyncing] = useState(false)
-  const [messageApi, contextHolder] = message.useMessage()
+  const [notice, setNotice] = useState('')
 
   const load = async () => {
     setError('')
     try {
-      const [overviewData, reserveData, runData] = await Promise.all([
-        api.overview(),
-        api.reserves('?page=1&page_size=6'),
-        api.syncRuns(),
-      ])
+      const [overviewData, reserveData, runData] = await Promise.all([api.overview(), api.reserves('?page=1&page_size=6'), api.syncRuns()])
       setOverview(overviewData)
       setReserves(reserveData.data)
       setLatestRun(runData.data[0] || null)
@@ -29,96 +31,63 @@ export function OverviewPage({ onOpenReserve }: { onOpenReserve: (reserve: Reser
     }
   }
 
-  useEffect(() => {
-    void load()
-  }, [])
+  useEffect(() => { void load() }, [])
 
   const runSync = async () => {
     setSyncing(true)
+    setNotice('')
     try {
       await api.runSync()
       await load()
-      messageApi.success('同步完成')
+      setNotice('同步完成，协议数据已更新')
     } catch (cause) {
-      messageApi.error(cause instanceof Error ? cause.message : '同步失败')
+      setNotice(cause instanceof Error ? cause.message : '同步失败')
     } finally {
       setSyncing(false)
     }
   }
 
-  if (error) return <PageState><Alert type="error" message="无法读取协议数据" description={error} showIcon /><Button onClick={() => void load()}>重试</Button></PageState>
-  if (!overview) return <PageState><Skeleton active paragraph={{ rows: 8 }} /></PageState>
-
-  const metrics = [
-    { index: '01', label: '总供应量', value: formatCurrency(overview.total_supplied_usd), note: 'TOTAL SUPPLIED' },
-    { index: '02', label: '总借款量', value: formatCurrency(overview.total_borrowed_usd), note: 'TOTAL BORROWED' },
-    { index: '03', label: '可用流动性', value: formatCurrency(overview.available_liquidity_usd), note: 'AVAILABLE' },
-    { index: '04', label: '资金利用率', value: formatPercent(overview.utilization_rate), note: 'UTILIZATION' },
-  ]
+  if (error) return <PageState><AlertState message="无法读取协议数据" description={error} /><Button variant="secondary" onClick={() => void load()}>重新连接</Button></PageState>
+  if (!overview) return <PageState><Skeleton className="h-10 w-48" /><Skeleton className="h-44 w-full" /><Skeleton className="h-80 w-full" /></PageState>
 
   return (
-    <div className="page page-enter">
-      {contextHolder}
-      <header className="page-header">
-        <div>
-          <div className="eyebrow">AAVE V3 / ETHEREUM</div>
-          <h1>协议概览</h1>
-          <p>最后同步 {formatDateTime(overview.last_synced_at)} · {overview.reserve_count} 个储备市场</p>
-        </div>
-        <div className="header-actions">
-          {overview.demo ? <Tag color="gold">DEMO DATA</Tag> : <Tag color="blue">THE GRAPH</Tag>}
-          <Button type="primary" icon={<RefreshCw size={16} />} loading={syncing} onClick={() => void runSync()}>
-            执行同步
-          </Button>
-        </div>
-      </header>
-
-      <section className="metric-grid">
-        {metrics.map((metric) => (
-          <article className="metric-card" key={metric.index}>
-            <span className="metric-index">{metric.index}</span>
-            <span className="metric-note">{metric.note}</span>
-            <strong>{metric.value}</strong>
-            <span>{metric.label}</span>
-          </article>
-        ))}
+    <div className="animate-page-in mx-auto max-w-[1480px] px-5 py-6 md:px-8 md:py-9">
+      <PageIntro eyebrow="Aave V3 / Ethereum" title="Protocol pulse" description={`最后同步 ${formatDateTime(overview.last_synced_at)} · ${overview.reserve_count} 个储备市场`} actions={<><StatusPill status={overview.demo ? 'demo' : 'graph'} label={overview.demo ? 'Demo data' : 'The Graph'} /><Button onClick={() => void runSync()} disabled={syncing}><RefreshCw className={syncing ? 'h-4 w-4 animate-spin' : 'h-4 w-4'} />{syncing ? '同步中' : '执行同步'}</Button></>} />
+      {notice ? <div role="status" className="mb-5 rounded-control border border-cyan/20 bg-cyan/5 px-4 py-3 text-sm text-cyan">{notice}</div> : null}
+      <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <MetricCard featured label="Total supplied" value={formatCurrency(overview.total_supplied_usd)} detail="总供应量 / protocol liquidity" icon={<Droplets className="h-4 w-4" />} tone="cyan" />
+        <MetricCard label="Total borrowed" value={formatCurrency(overview.total_borrowed_usd)} detail="总借款量" icon={<TrendingUp className="h-4 w-4" />} tone="blue" />
+        <MetricCard label="Available" value={formatCurrency(overview.available_liquidity_usd)} detail="可用流动性" icon={<Database className="h-4 w-4" />} tone="mint" />
+        <MetricCard label="Utilization" value={formatPercent(overview.utilization_rate)} detail="资金利用率" icon={<Gauge className="h-4 w-4" />} tone="amber" />
       </section>
 
-      <section className="split-grid">
-        <article className="data-panel reserve-panel">
-          <div className="panel-heading">
-            <div><span>MARKETS</span><h2>核心储备市场</h2></div>
-            <DatabaseZap size={22} />
+      <section className="mt-3 grid gap-3 xl:grid-cols-[minmax(0,1.6fr)_minmax(280px,0.7fr)]">
+        <article className="panel-sheen overflow-hidden rounded-panel border border-line bg-surface">
+          <div className="flex items-center justify-between border-b border-line px-5 py-4"><div><p className="font-mono text-[10px] uppercase tracking-[0.16em] text-cyan">Market map</p><h2 className="mt-1 text-lg font-medium tracking-[-0.03em]">核心储备市场</h2></div><Database className="h-5 w-5 text-muted" /></div>
+          <div className="divide-y divide-line">
+            {reserves.map((reserve) => <button type="button" key={reserve.id} onClick={() => onOpenReserve(reserve)} className="group grid w-full grid-cols-[auto_1fr_auto] items-center gap-3 px-5 py-4 text-left transition-colors hover:bg-white/[0.04] md:grid-cols-[auto_minmax(120px,1fr)_minmax(180px,0.7fr)_auto]">
+              <TokenOrb symbol={reserve.symbol} size="sm" />
+              <span className="min-w-0"><span className="block font-mono text-sm font-medium text-ink">{reserve.symbol}</span><span className="block truncate text-xs text-muted">{reserve.name}</span></span>
+              <span className="hidden md:block"><span className="block font-mono text-sm tabular-nums text-ink">{formatCurrency(reserve.total_supplied_usd)}</span><span className="mt-1 block text-[10px] uppercase tracking-[0.1em] text-muted">supplied</span></span>
+              <span className="flex items-center gap-3"><UtilizationBar value={reserve.utilization_rate} showValue /><ArrowUpRight className="h-4 w-4 text-muted transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-cyan" /></span>
+            </button>)}
           </div>
-          <Table
-            rowKey="id"
-            dataSource={reserves}
-            pagination={false}
-            onRow={(record) => ({ onClick: () => onOpenReserve(record) })}
-            columns={[
-              { title: '资产', dataIndex: 'symbol', render: (value, row) => <div className="asset-cell"><b>{value}</b><span>{row.name}</span></div> },
-              { title: '供应量', dataIndex: 'total_supplied_usd', align: 'right', render: formatCurrency },
-              { title: '利用率', dataIndex: 'utilization_rate', align: 'right', render: formatPercent },
-              { title: '', width: 36, render: () => <ArrowUpRight size={16} /> },
-            ]}
-          />
         </article>
 
-        <article className="data-panel sync-signal">
-          <div className="panel-heading"><div><span>PIPELINE</span><h2>同步信号</h2></div></div>
-          <div className={`signal-orbit ${latestRun?.status || 'idle'}`}><span /></div>
-          <strong>{latestRun?.status === 'succeeded' ? '数据管道正常' : '等待同步记录'}</strong>
-          <p>{latestRun ? `${latestRun.source.toUpperCase()} · 写入 ${latestRun.written_count} 个市场` : '执行首次同步后显示状态'}</p>
-          <dl>
-            <div><dt>最近执行</dt><dd>{formatDateTime(latestRun?.started_at)}</dd></div>
-            <div><dt>数据来源</dt><dd>{latestRun?.source.toUpperCase() || 'N/A'}</dd></div>
-          </dl>
+        <article className="rounded-panel border border-line bg-surface p-5">
+          <div className="flex items-center justify-between"><div><p className="font-mono text-[10px] uppercase tracking-[0.16em] text-mint">Data pipeline</p><h2 className="mt-1 text-lg font-medium tracking-[-0.03em]">同步信号</h2></div><Activity className="h-5 w-5 text-mint" /></div>
+          <div className="my-10 flex flex-col items-center text-center"><div className="relative grid h-24 w-24 place-items-center rounded-full border border-mint/20 bg-mint/[0.04]"><span className="absolute inset-2 rounded-full border border-dashed border-mint/35" /><span className="h-8 w-8 rounded-full bg-mint/80 shadow-[0_0_28px_rgba(78,242,194,0.55)] animate-pulse-ring" /></div><strong className="mt-5 font-mono text-sm text-ink">{latestRun?.status === 'succeeded' ? '数据管道正常' : '等待同步记录'}</strong><span className="mt-2 text-xs text-muted">{latestRun ? `${latestRun.source.toUpperCase()} · 写入 ${latestRun.written_count} 个市场` : '执行首次同步后显示状态'}</span></div>
+          <dl className="divide-y divide-line border-y border-line text-xs"><div className="flex justify-between py-3"><dt className="text-muted">最近执行</dt><dd className="font-mono text-ink">{formatDateTime(latestRun?.started_at)}</dd></div><div className="flex justify-between py-3"><dt className="text-muted">数据来源</dt><dd className="font-mono text-cyan">{latestRun?.source.toUpperCase() || 'N/A'}</dd></div></dl>
         </article>
       </section>
     </div>
   )
 }
 
+function AlertState({ message, description }: { message: string; description: string }) {
+  return <div role="alert" className="rounded-card border border-danger/30 bg-danger/10 p-4"><strong className="block text-sm text-danger">{message}</strong><span className="mt-1 block text-xs text-danger/80">{description}</span></div>
+}
+
 function PageState({ children }: { children: React.ReactNode }) {
-  return <div className="page-state">{children}</div>
+  return <div className="mx-auto flex min-h-[70vh] max-w-[720px] flex-col justify-center gap-4 px-5 py-10 md:px-8">{children}</div>
 }

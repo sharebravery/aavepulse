@@ -15,5 +15,5 @@ const statusMap: Record<StatusTone, { tone: BadgeTone; dot: string }> = {
 
 export function StatusPill({ label, status = 'neutral' }: { label: string; status?: StatusTone }) {
   const config = statusMap[status]
-  return <Badge tone={config.tone}><span className={cn('h-1.5 w-1.5 rounded-full', config.dot)} />{label}</Badge>
+  return <Badge data-status={status} tone={config.tone}><span className={cn('h-1.5 w-1.5 rounded-full', config.dot)} /><span data-status={status}>{label}</span></Badge>
 }

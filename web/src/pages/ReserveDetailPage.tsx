@@ -1,13 +1,18 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
-import { Alert, Button, Segmented, Skeleton, Tag } from 'antd'
-import { ArrowLeft, CircleDollarSign } from 'lucide-react'
+import { ArrowLeft, CircleDollarSign, ExternalLink, LineChart, Percent, WalletCards } from 'lucide-react'
 import { api } from '../lib/client'
 import { formatCurrency, formatPercent } from '../lib/format'
 import type { Reserve, ReserveSnapshot } from '../lib/types'
+import { PageIntro } from '../components/PageIntro'
+import { StatusPill } from '../components/StatusPill'
+import { TokenOrb } from '../components/TokenOrb'
+import { UtilizationBar } from '../components/UtilizationBar'
+import { Button } from '../components/ui/button'
+import { Skeleton } from '../components/ui/skeleton'
+import { Tabs, TabsList, TabsTrigger } from '../components/ui/tabs'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../components/ui/tooltip'
 
-const TrendChart = lazy(() => import('../components/TrendChart').then((module) => ({
-  default: module.TrendChart,
-})))
+const TrendChart = lazy(() => import('../components/TrendChart').then((module) => ({ default: module.TrendChart })))
 
 export function ReserveDetailPage({ reserve, onBack }: { reserve: Reserve; onBack: () => void }) {
   const [snapshots, setSnapshots] = useState<ReserveSnapshot[]>([])
@@ -18,38 +23,29 @@ export function ReserveDetailPage({ reserve, onBack }: { reserve: Reserve; onBac
 
   useEffect(() => {
     setLoading(true)
-    api.snapshots(reserve.id, range).then((data) => {
-      setSnapshots(data)
-      setError('')
-    }).catch((cause) => setError(cause instanceof Error ? cause.message : '趋势加载失败')).finally(() => setLoading(false))
+    api.snapshots(reserve.id, range).then((data) => { setSnapshots(data); setError('') }).catch((cause) => setError(cause instanceof Error ? cause.message : '趋势加载失败')).finally(() => setLoading(false))
   }, [reserve.id, range])
 
   return (
-    <div className="page page-enter">
-      <button type="button" className="back-link" onClick={onBack}><ArrowLeft size={17} /> 返回市场列表</button>
-      <header className="page-header reserve-header">
-        <div><div className="eyebrow">AAVE RESERVE / {reserve.symbol}</div><h1>{reserve.name}</h1><p className="address">{reserve.underlying_asset}</p></div>
-        <div className="asset-badge"><CircleDollarSign size={24} />{reserve.symbol}</div>
-      </header>
-      <section className="detail-metrics">
-        <div><span>供应量</span><strong>{formatCurrency(reserve.total_supplied_usd)}</strong></div>
-        <div><span>借款量</span><strong>{formatCurrency(reserve.total_borrowed_usd)}</strong></div>
-        <div><span>利用率</span><strong>{formatPercent(reserve.utilization_rate)}</strong></div>
-        <div><span>供应 / 借款 APY</span><strong>{formatPercent(reserve.supply_apy)} / {formatPercent(reserve.variable_borrow_apy)}</strong></div>
+    <div className="animate-page-in mx-auto max-w-[1480px] px-5 py-6 md:px-8 md:py-9">
+      <Button variant="ghost" size="sm" className="mb-5 -ml-3" onClick={onBack}><ArrowLeft className="h-4 w-4" />返回市场列表</Button>
+      <PageIntro eyebrow={`Aave reserve / ${reserve.symbol}`} title={reserve.name} description="Ethereum Mainnet · 当前储备状态与历史序列" actions={<><StatusPill status="neutral" label={reserve.demo ? 'Demo asset' : 'Indexed asset'} /><TokenOrb symbol={reserve.symbol} size="lg" /></>} />
+      <div className="mb-5 flex flex-wrap items-center gap-2 text-xs text-muted"><WalletCards className="h-4 w-4 text-cyan" /><TooltipProvider><Tooltip><TooltipTrigger asChild><span className="max-w-[280px] cursor-help truncate font-mono text-muted underline decoration-dotted underline-offset-4">{reserve.underlying_asset}</span></TooltipTrigger><TooltipContent>{reserve.underlying_asset}</TooltipContent></Tooltip></TooltipProvider><ExternalLink className="h-3.5 w-3.5" /><span className="font-mono text-[10px] uppercase tracking-[0.12em]">Ethereum / AAVE V3</span></div>
+
+      <section className="mb-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <DetailMetric label="供应量" value={formatCurrency(reserve.total_supplied_usd)} icon={<WalletCards className="h-4 w-4" />} /><DetailMetric label="借款量" value={formatCurrency(reserve.total_borrowed_usd)} icon={<LineChart className="h-4 w-4" />} /><div className="rounded-card border border-line bg-surface p-4"><span className="flex items-center justify-between text-xs text-muted"><span>利用率</span><Percent className="h-4 w-4 text-amber" /></span><strong className="mt-5 block font-mono text-2xl font-medium text-amber">{formatPercent(reserve.utilization_rate)}</strong><UtilizationBar className="mt-3" value={reserve.utilization_rate} showValue /></div><DetailMetric label="供应 / 借款 APY" value={`${formatPercent(reserve.supply_apy)} / ${formatPercent(reserve.variable_borrow_apy)}`} icon={<Percent className="h-4 w-4" />} tone="mint" />
       </section>
-      <section className="data-panel chart-panel">
-        <div className="panel-heading chart-controls">
-          <div><span>HISTORICAL SERIES</span><h2>{mode === 'liquidity' ? '供应量与借款量' : '供应与借款 APY'}</h2></div>
-          <div><Segmented value={mode} onChange={(value) => setMode(value as typeof mode)} options={[{ label: '流动性', value: 'liquidity' }, { label: '利率', value: 'rates' }]} /><Segmented value={range} onChange={(value) => setRange(String(value))} options={['7d', '30d', '90d']} /></div>
-        </div>
-        <div className="chart-legend"><span className="blue" />{mode === 'rates' ? '供应 APY' : '供应量'}<span className="amber" />{mode === 'rates' ? '借款 APY' : '借款量'}<Tag>{snapshots.length} POINTS</Tag></div>
-        {error ? <Alert type="error" message={error} showIcon /> : null}
-        {loading ? <Skeleton active paragraph={{ rows: 8 }} /> : (
-          <Suspense fallback={<Skeleton active paragraph={{ rows: 8 }} />}>
-            <TrendChart snapshots={snapshots} mode={mode} />
-          </Suspense>
-        )}
+
+      <section className="panel-sheen overflow-hidden rounded-panel border border-line bg-surface">
+        <div className="flex flex-col justify-between gap-4 border-b border-line px-5 py-5 md:flex-row md:items-center"><div><p className="font-mono text-[10px] uppercase tracking-[0.16em] text-cyan">Historical series</p><h2 className="mt-1 text-lg font-medium">{mode === 'liquidity' ? '供应量与借款量' : '供应与借款 APY'}</h2></div><div className="flex flex-wrap gap-2"><Tabs value={mode} onValueChange={(value) => setMode(value as typeof mode)}><TabsList><TabsTrigger value="liquidity">流动性</TabsTrigger><TabsTrigger value="rates">利率</TabsTrigger></TabsList></Tabs><Tabs value={range} onValueChange={setRange}><TabsList><TabsTrigger value="7d">7d</TabsTrigger><TabsTrigger value="30d">30d</TabsTrigger><TabsTrigger value="90d">90d</TabsTrigger></TabsList></Tabs></div></div>
+        <div className="flex items-center gap-4 px-5 pt-4 text-xs text-muted"><span className="flex items-center gap-2"><span className="h-0.5 w-4 bg-cyan" />{mode === 'rates' ? '供应 APY' : '供应量'}</span><span className="flex items-center gap-2"><span className="h-0.5 w-4 bg-mint" />{mode === 'rates' ? '借款 APY' : '借款量'}</span><StatusPill status="neutral" label={`${snapshots.length} points`} /></div>
+        <div className="min-h-[380px] px-2 pb-3 pt-2 md:px-5">{error ? <div role="alert" className="mt-8 rounded-card border border-danger/30 bg-danger/10 p-4 text-sm text-danger">{error}</div> : loading ? <Skeleton className="mt-3 h-[360px] w-full" /> : <Suspense fallback={<Skeleton className="mt-3 h-[360px] w-full" />}><TrendChart snapshots={snapshots} mode={mode} /></Suspense>}</div>
+        <div className="border-t border-line px-5 py-3 text-[10px] text-muted">Charting by TradingView · 数据仅用于只读研究与演示</div>
       </section>
     </div>
   )
+}
+
+function DetailMetric({ label, value, icon, tone = 'cyan' }: { label: string; value: string; icon: React.ReactNode; tone?: 'cyan' | 'mint' }) {
+  return <div className="rounded-card border border-line bg-surface p-4"><span className="flex items-center justify-between text-xs text-muted"><span>{label}</span><span className={tone === 'mint' ? 'text-mint' : 'text-cyan'}>{icon}</span></span><strong className="mt-5 block font-mono text-2xl font-medium tracking-[-0.06em] text-ink">{value}</strong></div>
 }

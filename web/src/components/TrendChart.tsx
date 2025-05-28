@@ -12,21 +12,21 @@ export function TrendChart({ snapshots, mode }: { snapshots: ReserveSnapshot[]; 
     const chart = createChart(container, {
       width: container.clientWidth,
       height: 360,
-      layout: { background: { type: ColorType.Solid, color: '#fbfaf6' }, textColor: '#536079', fontFamily: 'Fira Code' },
-      grid: { vertLines: { color: '#e5e1d7' }, horzLines: { color: '#e5e1d7' } },
-      rightPriceScale: { borderColor: '#cfc9bb' },
-      timeScale: { borderColor: '#cfc9bb', timeVisible: false },
-      crosshair: { vertLine: { color: '#1649d8' }, horzLine: { color: '#1649d8' } },
+      layout: { background: { type: ColorType.Solid, color: '#0b1022' }, textColor: '#8d99b8', fontFamily: 'Fira Code' },
+      grid: { vertLines: { color: '#1b2440' }, horzLines: { color: '#1b2440' } },
+      rightPriceScale: { borderColor: '#273252' },
+      timeScale: { borderColor: '#273252', timeVisible: false },
+      crosshair: { vertLine: { color: '#37d7ff' }, horzLine: { color: '#37d7ff' } },
     })
 
     const first = chart.addSeries(AreaSeries, {
-      lineColor: '#1649d8',
-      topColor: 'rgba(22, 73, 216, 0.24)',
-      bottomColor: 'rgba(22, 73, 216, 0.02)',
+      lineColor: '#37d7ff',
+      topColor: 'rgba(55, 215, 255, 0.22)',
+      bottomColor: 'rgba(55, 215, 255, 0.01)',
       lineWidth: 2,
       priceFormat: mode === 'rates' ? { type: 'price', precision: 2, minMove: 0.01 } : { type: 'volume' },
     })
-    const second = chart.addSeries(LineSeries, { color: '#d98b15', lineWidth: 2 })
+    const second = chart.addSeries(LineSeries, { color: '#4ef2c2', lineWidth: 2 })
     const toTime = (value: string) => Math.floor(new Date(value).getTime() / 1000) as UTCTimestamp
     first.setData(snapshots.map((item) => ({ time: toTime(item.snapshot_at), value: mode === 'rates' ? Number(item.supply_apy) * 100 : Number(item.total_supplied_usd) })))
     second.setData(snapshots.map((item) => ({ time: toTime(item.snapshot_at), value: mode === 'rates' ? Number(item.variable_borrow_apy) * 100 : Number(item.total_borrowed_usd) })))
@@ -40,5 +40,5 @@ export function TrendChart({ snapshots, mode }: { snapshots: ReserveSnapshot[]; 
     }
   }, [snapshots, mode])
 
-  return <div ref={containerRef} className="trend-chart" aria-label={mode === 'rates' ? 'APY 历史趋势图' : '供应借款历史趋势图'} />
+  return <div ref={containerRef} className="h-[360px] w-full" aria-label={mode === 'rates' ? 'APY 历史趋势图' : '供应借款历史趋势图'} />
 }
