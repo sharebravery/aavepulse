@@ -54,7 +54,7 @@ export function OverviewPage({ onOpenReserve }: { onOpenReserve: (reserve: Reser
     <div className="animate-page-in mx-auto max-w-[1480px] px-5 py-6 md:px-8 md:py-9">
       <PageIntro eyebrow="Aave V3 / Ethereum" title="Protocol pulse" description={`最后同步 ${formatDateTime(overview.last_synced_at)} · ${overview.reserve_count} 个储备市场`} actions={<><StatusPill status={overview.demo ? 'demo' : 'graph'} label={overview.demo ? 'Demo data' : 'The Graph'} /><Button onClick={() => void runSync()} disabled={syncing}><RefreshCw className={syncing ? 'h-4 w-4 animate-spin' : 'h-4 w-4'} />{syncing ? '同步中' : '执行同步'}</Button></>} />
       {notice ? <div role="status" className="mb-5 rounded-control border border-cyan/20 bg-cyan/5 px-4 py-3 text-sm text-cyan">{notice}</div> : null}
-      <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+      <section className="grid grid-cols-2 gap-3 xl:grid-cols-5">
         <MetricCard featured label="Total supplied" value={formatCurrency(overview.total_supplied_usd)} detail="总供应量 / protocol liquidity" icon={<Droplets className="h-4 w-4" />} tone="cyan" />
         <MetricCard label="Total borrowed" value={formatCurrency(overview.total_borrowed_usd)} detail="总借款量" icon={<TrendingUp className="h-4 w-4" />} tone="blue" />
         <MetricCard label="Available" value={formatCurrency(overview.available_liquidity_usd)} detail="可用流动性" icon={<Database className="h-4 w-4" />} tone="mint" />

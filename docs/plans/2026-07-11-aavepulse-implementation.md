@@ -14,9 +14,9 @@
 
 **Goal:** Build the documented AavePulse read-only Aave V3 monitoring application on the gin-admin template, including PostgreSQL persistence, The Graph synchronization, authenticated APIs, and a React dashboard.
 
-**Architecture:** Generate the backend from gin-admin with gin-admin-cli, retain its RBAC/bootstrap/Wire layers, and add a DEFI module following schema/dal/biz/api boundaries. Persist current reserve state and snapshots in PostgreSQL; serve aggregation APIs to a standalone Vite React frontend using Ant Design and TradingView Lightweight Charts.
+**Architecture:** Generate the backend from gin-admin with gin-admin-cli, retain its RBAC/bootstrap/Wire layers, and add a DEFI module following schema/dal/biz/api boundaries. Persist current reserve state and snapshots in PostgreSQL; serve aggregation APIs to a standalone Vite React frontend using Tailwind CSS, Radix UI, and TradingView Lightweight Charts.
 
-**Tech Stack:** Go, Gin, GORM, Casbin, Wire, PostgreSQL, The Graph GraphQL, React, TypeScript, Vite, Ant Design, Lightweight Charts, Docker Compose.
+**Tech Stack:** Go, Gin, GORM, Casbin, Wire, PostgreSQL, The Graph GraphQL, React, TypeScript, Vite, Tailwind CSS, Radix UI, Lightweight Charts, Docker Compose.
 
 ---
 
@@ -79,7 +79,7 @@
 2. Write failing tests for authentication storage, API error handling, and metric formatting.
 3. Implement the API client and formatting helpers until tests pass.
 4. Implement login, overview, reserves, reserve detail/trends, and sync history pages.
-5. Use Ant Design for controls and Lightweight Charts for line/area trends.
+5. Use Tailwind CSS and Radix UI for controls, and Lightweight Charts for line/area trends.
 6. Verify responsive layout, keyboard focus, loading, empty, and error states.
 7. Run frontend tests and `pnpm build`.
 

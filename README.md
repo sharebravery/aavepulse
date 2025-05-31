@@ -21,7 +21,7 @@ The Graph 同步储备市场数据，并通过 React 仪表盘展示协议概览
 
 - 后端：Go、Gin、GORM、Casbin、JWT、Wire、Swagger
 - 数据：PostgreSQL、The Graph GraphQL
-- 前端：React 19、TypeScript、Vite、Ant Design、Lightweight Charts
+- 前端：React 19、TypeScript、Vite、Tailwind CSS、Radix UI、Lightweight Charts
 - 工程：gin-admin、gin-admin-cli、Docker Compose、Vitest
 
 ## 快速开始

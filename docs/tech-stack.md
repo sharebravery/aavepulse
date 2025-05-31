@@ -31,7 +31,8 @@
 ## 前端
 
 - React
-- Ant Design
+- Tailwind CSS
+- Radix UI
 - TradingView Lightweight Charts：展示 APY、利用率、供应量和借款量趋势
 - Vite：前端开发与构建工具
 
@@ -48,6 +49,6 @@
 
 - Go + Gin + GORM 适合快速落地后台骨架
 - The Graph 适合做稳定的历史索引来源
-- React + Ant Design 适合快速完成后台页面
+- Tailwind CSS + Radix UI 适合构建可控、可访问且具有 DeFi 终端气质的界面
 - TradingView Lightweight Charts 能强化 DeFi 时间序列的展示效果，但不引入交易下单能力
 - PostgreSQL 足以支撑 MVP 的配置、同步和聚合场景，Redis 只作为后续优化

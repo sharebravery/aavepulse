@@ -36,6 +36,7 @@ func TestSyncBuildsQueryableOverviewAndIsIdempotent(t *testing.T) {
 
 	now := time.Date(2026, time.July, 11, 0, 0, 0, 0, time.UTC)
 	service := NewService(db, graph.NewDemoSource(now))
+	service.now = func() time.Time { return now }
 	ctx := context.Background()
 
 	first, err := service.Sync(ctx)
