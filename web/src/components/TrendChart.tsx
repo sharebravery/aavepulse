@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { AreaSeries, ColorType, LineSeries, createChart, type UTCTimestamp } from 'lightweight-charts'
 import type { ReserveSnapshot } from '../lib/types'
+import { copy } from '../lib/copy'
 
 export function TrendChart({ snapshots, mode }: { snapshots: ReserveSnapshot[]; mode: 'liquidity' | 'rates' }) {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -40,5 +41,5 @@ export function TrendChart({ snapshots, mode }: { snapshots: ReserveSnapshot[]; 
     }
   }, [snapshots, mode])
 
-  return <div ref={containerRef} className="h-[360px] w-full" aria-label={mode === 'rates' ? 'APY 历史趋势图' : '供应借款历史趋势图'} />
+  return <div ref={containerRef} className="h-[360px] w-full" aria-label={mode === 'rates' ? copy.detail.apyChartLabel : copy.detail.liquidityChartLabel} />
 }

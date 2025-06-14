@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { ArrowRight, Database, RefreshCw, ShieldCheck, Sparkles } from 'lucide-react'
 import { api } from '../lib/client'
+import { copy, errorMessage } from '../lib/copy'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { StatusPill } from '../components/StatusPill'
@@ -21,7 +22,7 @@ export function LoginPage({ onAuthenticated }: LoginPageProps) {
       setCaptchaID(await api.captcha())
       setValues((current) => ({ ...current, captcha: '' }))
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : '验证码加载失败')
+      setError(errorMessage(cause, copy.auth.captchaLoadError))
     }
   }
 
@@ -30,7 +31,7 @@ export function LoginPage({ onAuthenticated }: LoginPageProps) {
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (!values.username || !values.password || !values.captcha) {
-      setError('请完整填写账户、密码和验证码')
+      setError(copy.auth.completeFields)
       return
     }
     setLoading(true)
@@ -39,7 +40,7 @@ export function LoginPage({ onAuthenticated }: LoginPageProps) {
       const token = await api.login(values.username, values.password, captchaID, values.captcha)
       onAuthenticated(token.access_token)
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : '登录失败')
+      setError(errorMessage(cause, copy.auth.invalidCredentials))
       await refreshCaptcha()
     } finally {
       setLoading(false)
@@ -55,30 +56,30 @@ export function LoginPage({ onAuthenticated }: LoginPageProps) {
 
       <div className="relative mx-auto grid min-h-screen w-full max-w-[1480px] items-center gap-10 px-5 py-8 lg:grid-cols-[1fr_440px] lg:px-12">
         <section className="hidden max-w-2xl lg:block">
-          <div className="flex items-center gap-3"><span className="grid h-11 w-11 place-items-center rounded-xl border border-cyan/30 bg-gradient-to-br from-blue to-cyan font-mono text-xs font-semibold text-void">AP</span><span className="font-mono text-base font-semibold tracking-[-0.04em]">AavePulse</span><StatusPill status="neutral" label="Read-only" /></div>
-          <p className="mt-20 font-mono text-[11px] uppercase tracking-[0.2em] text-cyan">AAVE V3 / ETHEREUM / INDEXED INTELLIGENCE</p>
+          <div className="flex items-center gap-3"><span className="grid h-11 w-11 place-items-center rounded-xl border border-cyan/30 bg-gradient-to-br from-blue to-cyan font-mono text-xs font-semibold text-void">AP</span><span className="font-mono text-base font-semibold tracking-[-0.04em]">AavePulse</span><StatusPill status="neutral" label={copy.auth.readOnly} /></div>
+          <p className="mt-20 font-mono text-[11px] uppercase tracking-[0.2em] text-cyan">{copy.auth.eyebrow}</p>
           <h1 className="mt-5 max-w-xl text-5xl font-medium leading-[0.98] tracking-[-0.07em] text-ink xl:text-7xl">Follow the<br /><span className="bg-gradient-to-r from-ink via-cyan to-blue bg-clip-text text-transparent">liquidity pulse.</span></h1>
-          <p className="mt-7 max-w-lg text-base leading-7 text-muted">把 The Graph 的链上索引，变成可追踪、可审计、可复现的 DeFi 数据后台。</p>
+          <p className="mt-7 max-w-lg text-base leading-7 text-muted">{copy.auth.description}</p>
           <div className="mt-12 grid max-w-xl grid-cols-3 gap-3">
-            <Feature icon={<Database />} value="90D" label="历史快照" />
-            <Feature icon={<Sparkles />} value="6" label="储备市场" />
-            <Feature icon={<ShieldCheck />} value="0" label="链上写入" />
+            <Feature icon={<Database />} value="90D" label={copy.auth.snapshotHistory} />
+            <Feature icon={<Sparkles />} value="6" label={copy.auth.reserveMarkets} />
+            <Feature icon={<ShieldCheck />} value="0" label={copy.auth.chainWrites} />
           </div>
         </section>
 
         <section className="w-full">
-          <div className="mb-6 flex items-center justify-between lg:hidden"><div className="flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl border border-cyan/30 bg-gradient-to-br from-blue to-cyan font-mono text-xs font-semibold text-void">AP</span><span className="font-mono text-sm font-semibold">AavePulse</span></div><StatusPill status="neutral" label="Read-only" /></div>
+          <div className="mb-6 flex items-center justify-between lg:hidden"><div className="flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl border border-cyan/30 bg-gradient-to-br from-blue to-cyan font-mono text-xs font-semibold text-void">AP</span><span className="font-mono text-sm font-semibold">AavePulse</span></div><StatusPill status="neutral" label={copy.auth.readOnly} /></div>
           <div className="panel-sheen rounded-[1.5rem] border border-line bg-surface/85 p-6 shadow-2xl shadow-black/35 backdrop-blur-xl sm:p-8">
-            <div className="flex items-center justify-between"><div><p className="font-mono text-[10px] uppercase tracking-[0.18em] text-cyan">Secure workspace</p><h2 className="mt-3 text-2xl font-medium tracking-[-0.05em]">进入监控台</h2></div><span className="grid h-10 w-10 place-items-center rounded-xl bg-mint/10 text-mint"><ShieldCheck className="h-5 w-5" /></span></div>
-            <p className="mt-3 text-sm text-muted">连接到本地只读协议数据空间。</p>
+            <div className="flex items-center justify-between"><div><p className="font-mono text-[10px] uppercase tracking-[0.18em] text-cyan">{copy.auth.secureWorkspace}</p><h2 className="mt-3 text-2xl font-medium tracking-[-0.05em]">{copy.auth.signInTitle}</h2></div><span className="grid h-10 w-10 place-items-center rounded-xl bg-mint/10 text-mint"><ShieldCheck className="h-5 w-5" /></span></div>
+            <p className="mt-3 text-sm text-muted">{copy.auth.signInDescription}</p>
             {error ? <div role="alert" className="mt-5 rounded-control border border-danger/30 bg-danger/10 px-3 py-2.5 text-sm text-danger">{error}</div> : null}
             <form className="mt-7 space-y-4" onSubmit={(event) => void submit(event)}>
-              <Field label="账户"><Input autoComplete="username" value={values.username} onChange={(event) => setValues((current) => ({ ...current, username: event.target.value }))} /></Field>
-              <Field label="密码"><Input type="password" autoComplete="current-password" value={values.password} onChange={(event) => setValues((current) => ({ ...current, password: event.target.value }))} /></Field>
-              <Field label="验证码"><div className="flex gap-2"><Input maxLength={8} value={values.captcha} onChange={(event) => setValues((current) => ({ ...current, captcha: event.target.value }))} /><TooltipProvider><Tooltip><TooltipTrigger asChild><button type="button" aria-label="刷新验证码" onClick={() => void refreshCaptcha()} className="h-10 w-32 shrink-0 overflow-hidden rounded-control border border-line bg-white/[0.04] transition-colors hover:border-cyan/50">{captchaID ? <img className="h-full w-full object-cover" src={api.captchaImage(captchaID)} alt="验证码" /> : <RefreshCw className="mx-auto h-4 w-4 text-muted" />}</button></TooltipTrigger><TooltipContent>刷新验证码</TooltipContent></Tooltip></TooltipProvider></div></Field>
-              <Button type="submit" size="lg" className="mt-3 w-full" disabled={loading}>{loading ? '验证中...' : '验证并进入'}<ArrowRight className="h-4 w-4" /></Button>
+              <Field label={copy.auth.username}><Input autoComplete="username" value={values.username} onChange={(event) => setValues((current) => ({ ...current, username: event.target.value }))} /></Field>
+              <Field label={copy.auth.password}><Input type="password" autoComplete="current-password" value={values.password} onChange={(event) => setValues((current) => ({ ...current, password: event.target.value }))} /></Field>
+              <Field label={copy.auth.captcha}><div className="flex gap-2"><Input maxLength={8} value={values.captcha} onChange={(event) => setValues((current) => ({ ...current, captcha: event.target.value }))} /><TooltipProvider><Tooltip><TooltipTrigger asChild><button type="button" aria-label={copy.auth.refreshCaptcha} onClick={() => void refreshCaptcha()} className="h-10 w-32 shrink-0 overflow-hidden rounded-control border border-line bg-white/[0.04] transition-colors hover:border-cyan/50">{captchaID ? <img className="h-full w-full object-cover" src={api.captchaImage(captchaID)} alt={copy.auth.captcha} /> : <RefreshCw className="mx-auto h-4 w-4 text-muted" />}</button></TooltipTrigger><TooltipContent>{copy.auth.refreshCaptcha}</TooltipContent></Tooltip></TooltipProvider></div></Field>
+              <Button type="submit" size="lg" className="mt-3 w-full" disabled={loading}>{loading ? copy.auth.signingIn : copy.auth.signIn}<ArrowRight className="h-4 w-4" /></Button>
             </form>
-            <p className="mt-6 border-t border-line pt-5 text-xs text-muted">本地演示账户：<code className="text-cyan">admin / abc-123</code></p>
+            <p className="mt-6 border-t border-line pt-5 text-xs text-muted">{copy.auth.demoAccount} <code className="text-cyan">admin / abc-123</code></p>
           </div>
         </section>
       </div>
