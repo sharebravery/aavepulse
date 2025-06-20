@@ -32,7 +32,7 @@ export async function apiRequest<T>(path: string, init: RequestInit = {}): Promi
   const payload = await response.json().catch(() => ({}))
   if (!response.ok) {
     if (response.status === 401) clearToken()
-    const message = payload?.error?.detail || `请求失败 (${response.status})`
+    const message = payload?.error?.detail || `Request failed (${response.status})`
     throw new ApiError(response.status, message)
   }
   return payload as T

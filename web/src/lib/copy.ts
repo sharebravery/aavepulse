@@ -145,6 +145,7 @@ export const copy = {
     write: 'Write',
     syncComplete: 'Sync complete. A new run has been recorded.',
     syncFailed: 'Sync failed.',
+    errorDetails: 'Error details available',
   },
 } as const
 

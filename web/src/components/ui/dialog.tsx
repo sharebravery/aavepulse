@@ -21,7 +21,7 @@ export const DialogContent = forwardRef<ElementRef<typeof DialogPrimitive.Conten
       <DialogOverlay />
       <DialogPrimitive.Content ref={ref} className={cn('fixed right-0 top-0 z-50 h-full w-[min(88vw,360px)] border-l border-line bg-surface p-5 text-ink shadow-2xl shadow-black/50', className)} {...props}>
         {children}
-        <DialogPrimitive.Close className="absolute right-4 top-4 rounded-lg p-2 text-muted transition-colors hover:bg-white/[0.06] hover:text-ink"><X className="h-4 w-4" /><span className="sr-only">关闭</span></DialogPrimitive.Close>
+        <DialogPrimitive.Close className="absolute right-4 top-4 rounded-lg p-2 text-muted transition-colors hover:bg-white/[0.06] hover:text-ink"><X className="h-4 w-4" /><span className="sr-only">Close</span></DialogPrimitive.Close>
       </DialogPrimitive.Content>
     </DialogPortal>
   ),

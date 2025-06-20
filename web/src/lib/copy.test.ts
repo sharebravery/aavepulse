@@ -12,6 +12,6 @@ describe('english copy', () => {
   it('provides complete copy groups and safe error fallbacks', () => {
     expect(copy.auth.signIn).toBe('Sign in')
     expect(copy.overview.title).toBe('Protocol pulse')
-    expect(errorMessage(new Error('后端错误'), copy.common.loadError)).toBe(copy.common.loadError)
+    expect(errorMessage(new Error('backend error'), copy.common.loadError)).toBe(copy.common.loadError)
   })
 })
