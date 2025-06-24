@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
-import { ArrowLeft, CircleDollarSign, ExternalLink, LineChart, Percent, WalletCards } from 'lucide-react'
+import { ArrowLeft, ExternalLink, LineChart, Percent, WalletCards } from 'lucide-react'
 import { api } from '../lib/client'
 import { copy, errorMessage } from '../lib/copy'
 import { formatCurrency, formatPercent } from '../lib/format'

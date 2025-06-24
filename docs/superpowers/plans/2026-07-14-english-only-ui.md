@@ -1,5 +1,7 @@
 # English-Only UI Implementation Plan
 
+**Status:** Implementation completed; final verification is recorded in the handoff.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** 将 AavePulse 前端所有用户可见内容统一为英文，并保持现有 Tailwind/Radix DeFi 终端视觉、认证、数据和图表行为不变。
@@ -21,6 +23,7 @@
 
 - Create: `web/src/lib/copy.ts`，集中英文文案、状态/来源映射和英文错误兜底。
 - Modify: `web/src/lib/format.ts`，统一 `en-US` 日期、金额、数量和百分比格式。
+- Modify: `web/index.html`，声明英文页面语言和深色主题色。
 - Test: `web/src/lib/copy.test.ts`、`web/src/lib/format.test.ts`。
 - Modify: `web/src/pages/LoginPage.tsx`、`web/src/pages/Dashboard.tsx`、`web/src/components/ProtocolStatusBar.tsx`、`web/src/components/TrendChart.tsx`、`web/src/components/UtilizationBar.tsx`。
 - Modify: `web/src/pages/OverviewPage.tsx`、`web/src/pages/ReservesPage.tsx`、`web/src/pages/ReserveDetailPage.tsx`、`web/src/pages/SyncRunsPage.tsx`。
