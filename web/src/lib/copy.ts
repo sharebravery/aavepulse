@@ -169,8 +169,5 @@ export function sourceLabel(source: string): string {
 
 export function errorMessage(cause: unknown, fallback: string): string {
   if (import.meta.env.DEV && cause instanceof Error) console.error(cause)
-  if (typeof cause === 'object' && cause !== null && 'status' in cause && cause.status === 401) {
-    return copy.auth.invalidCredentials
-  }
   return fallback
 }
