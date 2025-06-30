@@ -15,7 +15,7 @@
 2. `pnpm --dir web install` 安装前端依赖。
 3. `pnpm --dir web build` 生成后端可托管的静态文件。
 4. `make start` 启动后端和静态站点。
-5. 打开 `http://localhost:8040`，使用 `admin / abc-123` 登录。
+5. 打开 `http://localhost:8040`，使用 `admin / abc-123` 登录。演示模式会关闭验证码校验，非演示模式仍要求输入验证码。
 6. 检查概览、储备详情、趋势图和同步记录。
 
 说明：MVP 阶段实际只要求启动数据库，缓存层后续按需补充。

@@ -31,6 +31,7 @@ export const copy = {
     invalidCredentials: 'Invalid credentials or captcha.',
     captchaLoadError: 'Unable to load captcha.',
     completeFields: 'Enter your username, password, and captcha.',
+    demoCaptchaDisabled: 'Captcha is disabled in demo mode.',
     demoAccount: 'Local demo account:',
   },
   dashboard: {

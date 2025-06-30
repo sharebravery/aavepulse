@@ -92,11 +92,16 @@ func (a *Login) ParseUserID(c *gin.Context) (string, error) {
 	return userID, nil
 }
 
-// This function generates a new captcha ID and returns it as a `schema.Captcha` struct. The length of
-// the captcha is determined by the `config.C.Util.Captcha.Length` configuration value.
+// This function returns the login challenge metadata. Demo mode skips captcha so the local
+// read-only walkthrough remains deterministic; non-demo environments retain the challenge.
 func (a *Login) GetCaptcha(ctx context.Context) (*schema.Captcha, error) {
+	if config.C.DeFi.Demo {
+		return &schema.Captcha{Enabled: false}, nil
+	}
+
 	return &schema.Captcha{
 		CaptchaID: captcha.NewLen(config.C.Util.Captcha.Length),
+		Enabled:   true,
 	}, nil
 }
 
@@ -137,7 +142,7 @@ func (a *Login) genUserToken(ctx context.Context, userID string) (*schema.LoginT
 
 func (a *Login) Login(ctx context.Context, formItem *schema.LoginForm) (*schema.LoginToken, error) {
 	// verify captcha
-	if !captcha.VerifyString(formItem.CaptchaID, formItem.CaptchaCode) {
+	if !config.C.DeFi.Demo && !captcha.VerifyString(formItem.CaptchaID, formItem.CaptchaCode) {
 		return nil, errors.BadRequest(config.ErrInvalidCaptchaID, "Incorrect captcha")
 	}
 

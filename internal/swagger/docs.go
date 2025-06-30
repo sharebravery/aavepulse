@@ -1682,6 +1682,9 @@ const docTemplate = `{
         "schema.Captcha": {
             "type": "object",
             "properties": {
+                "captcha_enabled": {
+                    "type": "boolean"
+                },
                 "captcha_id": {
                     "description": "Captcha ID",
                     "type": "string"
@@ -1740,8 +1743,6 @@ const docTemplate = `{
         "schema.LoginForm": {
             "type": "object",
             "required": [
-                "captcha_code",
-                "captcha_id",
                 "password",
                 "username"
             ],

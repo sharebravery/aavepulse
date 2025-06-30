@@ -4,13 +4,14 @@ import "strings"
 
 type Captcha struct {
 	CaptchaID string `json:"captcha_id"` // Captcha ID
+	Enabled   bool   `json:"captcha_enabled"`
 }
 
 type LoginForm struct {
 	Username    string `json:"username" binding:"required"`     // Login name
 	Password    string `json:"password" binding:"required"`     // Login password (md5 hash)
-	CaptchaID   string `json:"captcha_id" binding:"required"`   // Captcha verify id
-	CaptchaCode string `json:"captcha_code" binding:"required"` // Captcha verify code
+	CaptchaID   string `json:"captcha_id"`   // Captcha verify id
+	CaptchaCode string `json:"captcha_code"` // Captcha verify code
 }
 
 func (a *LoginForm) Trim() *LoginForm {

@@ -39,9 +39,12 @@ export async function apiRequest<T>(path: string, init: RequestInit = {}): Promi
 }
 
 export const api = {
-  async captcha(): Promise<string> {
-    const response = await apiRequest<ApiEnvelope<{ captcha_id: string }>>('/captcha/id')
-    return response.data.captcha_id
+  async captcha(): Promise<{ captchaID: string; enabled: boolean }> {
+    const response = await apiRequest<ApiEnvelope<{ captcha_id: string; captcha_enabled: boolean }>>('/captcha/id')
+    return {
+      captchaID: response.data.captcha_id,
+      enabled: response.data.captcha_enabled,
+    }
   },
 
   captchaImage(captchaID: string): string {

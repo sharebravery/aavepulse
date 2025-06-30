@@ -13,13 +13,16 @@ interface LoginPageProps {
 
 export function LoginPage({ onAuthenticated }: LoginPageProps) {
   const [captchaID, setCaptchaID] = useState('')
+  const [captchaEnabled, setCaptchaEnabled] = useState(true)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [values, setValues] = useState({ username: 'admin', password: 'abc-123', captcha: '' })
 
   const refreshCaptcha = async () => {
     try {
-      setCaptchaID(await api.captcha())
+      const challenge = await api.captcha()
+      setCaptchaID(challenge.captchaID)
+      setCaptchaEnabled(challenge.enabled)
       setValues((current) => ({ ...current, captcha: '' }))
     } catch (cause) {
       setError(errorMessage(cause, copy.auth.captchaLoadError))
@@ -30,7 +33,7 @@ export function LoginPage({ onAuthenticated }: LoginPageProps) {
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    if (!values.username || !values.password || !values.captcha) {
+    if (!values.username || !values.password || (captchaEnabled && !values.captcha)) {
       setError(copy.auth.completeFields)
       return
     }
@@ -76,7 +79,7 @@ export function LoginPage({ onAuthenticated }: LoginPageProps) {
             <form className="mt-7 space-y-4" onSubmit={(event) => void submit(event)}>
               <Field label={copy.auth.username}><Input autoComplete="username" value={values.username} onChange={(event) => setValues((current) => ({ ...current, username: event.target.value }))} /></Field>
               <Field label={copy.auth.password}><Input type="password" autoComplete="current-password" value={values.password} onChange={(event) => setValues((current) => ({ ...current, password: event.target.value }))} /></Field>
-              <Field label={copy.auth.captcha}><div className="flex gap-2"><Input maxLength={8} value={values.captcha} onChange={(event) => setValues((current) => ({ ...current, captcha: event.target.value }))} /><TooltipProvider><Tooltip><TooltipTrigger asChild><button type="button" aria-label={copy.auth.refreshCaptcha} onClick={() => void refreshCaptcha()} className="h-10 w-32 shrink-0 overflow-hidden rounded-control border border-line bg-white/[0.04] transition-colors hover:border-cyan/50">{captchaID ? <img className="h-full w-full object-cover" src={api.captchaImage(captchaID)} alt={copy.auth.captcha} /> : <RefreshCw className="mx-auto h-4 w-4 text-muted" />}</button></TooltipTrigger><TooltipContent>{copy.auth.refreshCaptcha}</TooltipContent></Tooltip></TooltipProvider></div></Field>
+              {captchaEnabled ? <Field label={copy.auth.captcha}><div className="flex items-center gap-2"><Input maxLength={8} value={values.captcha} onChange={(event) => setValues((current) => ({ ...current, captcha: event.target.value }))} /><TooltipProvider><Tooltip><TooltipTrigger asChild><button type="button" aria-label={copy.auth.refreshCaptcha} onClick={() => void refreshCaptcha()} className="aspect-[5/2] w-32 shrink-0 overflow-hidden rounded-control border border-line bg-white/[0.04] transition-colors hover:border-cyan/50">{captchaID ? <img className="h-full w-full object-contain" src={api.captchaImage(captchaID)} alt={copy.auth.captcha} /> : <RefreshCw className="mx-auto h-4 w-4 text-muted" />}</button></TooltipTrigger><TooltipContent>{copy.auth.refreshCaptcha}</TooltipContent></Tooltip></TooltipProvider></div></Field> : <div className="rounded-control border border-mint/20 bg-mint/5 px-3 py-2.5 text-xs text-mint">{copy.auth.demoCaptchaDisabled}</div>}
               <Button type="submit" size="lg" className="mt-3 w-full" disabled={loading}>{loading ? copy.auth.signingIn : copy.auth.signIn}<ArrowRight className="h-4 w-4" /></Button>
             </form>
             <p className="mt-6 border-t border-line pt-5 text-xs text-muted">{copy.auth.demoAccount} <code className="text-cyan">admin / abc-123</code></p>
