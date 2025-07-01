@@ -1,15 +1,11 @@
 # AavePulse
 
-AavePulse 是一个基于 Go 的只读 Aave V3 数据监控后台。项目以
-[`gin-admin`](https://github.com/LyricTian/gin-admin) 为后端工程底座，使用
-The Graph 同步储备市场数据，并通过 React 仪表盘展示协议概览和历史趋势。
-
-真实数据适配器以 Aave 官方
-[`protocol-subgraphs`](https://github.com/aave/protocol-subgraphs) 的 V3 schema 为准。
+AavePulse 是一个基于 Go 的只读 Aave V3 数据监控后台，使用 The Graph 同步储备市场
+数据，并通过 React 仪表盘展示协议概览和历史趋势。
 
 ## 功能
 
-- 保留成熟后台模板的登录、RBAC、审计、Swagger 和 Wire 依赖注入能力
+- 提供登录、RBAC、审计、Swagger 和 Wire 依赖注入能力
 - 通过 The Graph 接入 Aave V3 Ethereum 储备市场数据
 - 将当前市场、90 天快照和同步记录持久化到 PostgreSQL
 - 展示供应量、借款量、可用流动性、资金利用率和 APY
@@ -22,7 +18,7 @@ The Graph 同步储备市场数据，并通过 React 仪表盘展示协议概览
 - 后端：Go、Gin、GORM、Casbin、JWT、Wire、Swagger
 - 数据：PostgreSQL、The Graph GraphQL
 - 前端：React 19、TypeScript、Vite、Tailwind CSS、Radix UI、Lightweight Charts
-- 工程：gin-admin、gin-admin-cli、Docker Compose、Vitest
+- 工程：Docker Compose、Vitest
 
 ## 快速开始
 
@@ -101,30 +97,12 @@ Swagger：`http://localhost:8040/swagger/index.html`
 ## 目录
 
 ```text
-internal/mods/rbac   gin-admin 提供的登录、权限和审计模块
+internal/mods/rbac   登录、权限和审计模块
 internal/mods/defi   Aave 数据接入、持久化、同步、聚合和 API
 configs              TOML 配置、Casbin 模型和菜单资源
 web                  React 仪表盘
-docs                 需求、架构和迁移文档
 ```
-
-## 文档入口
-
-- [项目文档索引](./docs/README.md)
-- [需求规格](./docs/requirements.md)
-- [模板迁移规范](./docs/template-migration.md)
-- [数据库方案](./docs/database.md)
-- [本地启动约定](./docs/local-development.md)
-
-## 当前约束
-
-- 不提交博客正文
-- 不处理私钥或敏感凭据
-- 不做交易签名或真实链上写操作
-- PostgreSQL 是 MVP 必需依赖，Redis 不是
-- 项目代码必须从 `gin-admin` 模板生成，不再使用自建 Gin 骨架
 
 ## 许可证
 
-项目使用 Apache-2.0 许可证，并保留 `gin-admin` 上游派生说明，详见
-[LICENSE](./LICENSE) 和 [NOTICE](./NOTICE)。
+项目使用 Apache-2.0 许可证，许可证说明见 [LICENSE](./LICENSE)。

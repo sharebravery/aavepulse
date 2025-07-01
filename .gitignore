@@ -41,7 +41,7 @@ web/*.tsbuildinfo
 web/vite.config.js
 web/vite.config.d.ts
 
-# Workspace-only agent metadata
+# Local workspace metadata
 .agents
 .skilld
 AGENTS.md
